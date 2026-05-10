@@ -1,0 +1,193 @@
+/* ============================================================================
+   PROPHET — layout.css
+   Grilles principales, responsive 320 → desktop, structure SPA
+   ============================================================================ */
+
+/* Container global limité à --max-w sur desktop, full sur mobile */
+.container {
+  width: 100%;
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 var(--sp-4);
+}
+
+/* ---------- Layout SPA (app.html) : header sticky + main + bottom-tabs sticky ---------- */
+.app-shell {
+  display: grid;
+  grid-template-rows: var(--header-h) 1fr var(--tabs-h);
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(10, 10, 10, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+}
+
+.app-main {
+  padding: var(--sp-4) 0 var(--sp-8);
+  overflow-y: auto;
+}
+
+.app-tabs {
+  position: sticky;
+  bottom: 0;
+  z-index: 50;
+  background: rgba(10, 10, 10, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  height: var(--tabs-h);
+}
+
+/* ---------- Layout login (index.html) : full-screen centré ---------- */
+.login-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--sp-6) var(--sp-4);
+  background:
+    radial-gradient(circle at 20% 20%, rgba(0, 255, 136, 0.08), transparent 60%),
+    radial-gradient(circle at 80% 80%, rgba(255, 215, 0, 0.06), transparent 60%),
+    var(--bg);
+}
+
+.login-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: var(--sp-6);
+  padding: var(--sp-8) 0;
+}
+
+/* ---------- Header content ---------- */
+.header-content {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+.header-brand {
+  font-size: var(--fs-md);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  background: linear-gradient(90deg, var(--neon), var(--gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.header-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-size: var(--fs-sm);
+}
+
+/* ---------- Bottom tabs ---------- */
+.tabs-list {
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: stretch;
+  max-width: var(--max-w);
+  margin: 0 auto;
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  transition: color var(--t-fast) var(--ease);
+  padding: var(--sp-1);
+}
+
+.tab-item.active {
+  color: var(--neon);
+}
+
+.tab-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* ---------- Grilles utilitaires ---------- */
+.stack { display: flex; flex-direction: column; }
+.stack-2 { display: flex; flex-direction: column; gap: var(--sp-2); }
+.stack-3 { display: flex; flex-direction: column; gap: var(--sp-3); }
+.stack-4 { display: flex; flex-direction: column; gap: var(--sp-4); }
+.stack-6 { display: flex; flex-direction: column; gap: var(--sp-6); }
+
+.row { display: flex; gap: var(--sp-3); align-items: center; }
+.row-between { display: flex; justify-content: space-between; align-items: center; gap: var(--sp-3); }
+
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sp-3); }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-3); }
+.grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--sp-3); }
+
+.section { margin-bottom: var(--sp-6); }
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  margin-bottom: var(--sp-3);
+}
+
+.spacer-1 { height: var(--sp-1); }
+.spacer-2 { height: var(--sp-2); }
+.spacer-4 { height: var(--sp-4); }
+.spacer-8 { height: var(--sp-8); }
+
+/* ---------- Helpers texte ---------- */
+.txt-center { text-align: center; }
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- Visibility ---------- */
+.hidden { display: none !important; }
+.invisible { visibility: hidden; }
+
+/* ---------- Responsive : tablette + ---------- */
+@media (min-width: 768px) {
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); gap: var(--sp-4); }
+  .container { padding: 0 var(--sp-6); }
+}
+
+/* ---------- Responsive : desktop ---------- */
+@media (min-width: 1024px) {
+  :root {
+    --header-h: 64px;
+    --tabs-h: 64px;
+  }
+}
+
+/* ---------- Safe areas iOS ---------- */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .app-header { padding-top: env(safe-area-inset-top); height: calc(var(--header-h) + env(safe-area-inset-top)); }
+  .app-tabs { padding-bottom: env(safe-area-inset-bottom); height: calc(var(--tabs-h) + env(safe-area-inset-bottom)); }
+}

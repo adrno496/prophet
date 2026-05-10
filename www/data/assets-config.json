@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "generated_at": "2026-05-08",
+  "categories": [
+    {
+      "id": "crypto",
+      "label_fr": "Cryptos",
+      "label_en": "Crypto",
+      "color": "#ffa500",
+      "min_level": 1
+    },
+    {
+      "id": "stock",
+      "label_fr": "Actions",
+      "label_en": "Stocks",
+      "color": "#3b82f6",
+      "min_level": 1
+    },
+    {
+      "id": "index",
+      "label_fr": "Indices",
+      "label_en": "Indices",
+      "color": "#a855f7",
+      "min_level": 1
+    },
+    {
+      "id": "commodity",
+      "label_fr": "Matières premières",
+      "label_en": "Commodities",
+      "color": "#ffd700",
+      "min_level": 5
+    },
+    {
+      "id": "forex",
+      "label_fr": "Forex",
+      "label_en": "Forex",
+      "color": "#14b8a6",
+      "min_level": 1
+    },
+    {
+      "id": "risk",
+      "label_fr": "Risque",
+      "label_en": "Risk",
+      "color": "#ef4444",
+      "min_level": 5
+    }
+  ],
+  "timeframes": [
+    { "id": "15m",  "label": "15 min",   "minutes": 15,   "stakes_window_pct": 0.20 },
+    { "id": "30m",  "label": "30 min",   "minutes": 30,   "stakes_window_pct": 0.20 },
+    { "id": "1h",   "label": "1 heure",  "minutes": 60,   "stakes_window_pct": 0.20 },
+    { "id": "4h",   "label": "4 heures", "minutes": 240,  "stakes_window_pct": 0.20 },
+    { "id": "8h",   "label": "8 heures", "minutes": 480,  "stakes_window_pct": 0.20 },
+    { "id": "24h",  "label": "24 heures","minutes": 1440, "stakes_window_pct": 0.20 }
+  ],
+  "assets": [
+    { "id": "BTC",   "name": "Bitcoin",         "symbol": "BTC",   "category": "crypto",    "api_source": "cg", "api_id": "bitcoin",          "min_level": 1 },
+    { "id": "ETH",   "name": "Ethereum",        "symbol": "ETH",   "category": "crypto",    "api_source": "cg", "api_id": "ethereum",         "min_level": 1 },
+    { "id": "BNB",   "name": "BNB",             "symbol": "BNB",   "category": "crypto",    "api_source": "cg", "api_id": "binancecoin",      "min_level": 1 },
+    { "id": "SOL",   "name": "Solana",          "symbol": "SOL",   "category": "crypto",    "api_source": "cg", "api_id": "solana",           "min_level": 1 },
+    { "id": "XRP",   "name": "XRP",             "symbol": "XRP",   "category": "crypto",    "api_source": "cg", "api_id": "ripple",           "min_level": 1 },
+    { "id": "ADA",   "name": "Cardano",         "symbol": "ADA",   "category": "crypto",    "api_source": "cg", "api_id": "cardano",          "min_level": 1 },
+    { "id": "AVAX",  "name": "Avalanche",       "symbol": "AVAX",  "category": "crypto",    "api_source": "cg", "api_id": "avalanche-2",      "min_level": 1 },
+    { "id": "DOGE",  "name": "Dogecoin",        "symbol": "DOGE",  "category": "crypto",    "api_source": "cg", "api_id": "dogecoin",         "min_level": 1 },
+    { "id": "TRX",   "name": "TRON",            "symbol": "TRX",   "category": "crypto",    "api_source": "cg", "api_id": "tron",             "min_level": 1 },
+    { "id": "DOT",   "name": "Polkadot",        "symbol": "DOT",   "category": "crypto",    "api_source": "cg", "api_id": "polkadot",         "min_level": 1 },
+    { "id": "LINK",  "name": "Chainlink",       "symbol": "LINK",  "category": "crypto",    "api_source": "cg", "api_id": "chainlink",        "min_level": 1 },
+    { "id": "MATIC", "name": "Polygon (MATIC)", "symbol": "MATIC", "category": "crypto",    "api_source": "cg", "api_id": "matic-network",    "min_level": 1 },
+    { "id": "TON",   "name": "Toncoin",         "symbol": "TON",   "category": "crypto",    "api_source": "cg", "api_id": "the-open-network", "min_level": 1 },
+    { "id": "SHIB",  "name": "Shiba Inu",       "symbol": "SHIB",  "category": "crypto",    "api_source": "cg", "api_id": "shiba-inu",        "min_level": 1 },
+    { "id": "LTC",   "name": "Litecoin",        "symbol": "LTC",   "category": "crypto",    "api_source": "cg", "api_id": "litecoin",         "min_level": 1 },
+    { "id": "BCH",   "name": "Bitcoin Cash",    "symbol": "BCH",   "category": "crypto",    "api_source": "cg", "api_id": "bitcoin-cash",     "min_level": 1 },
+    { "id": "NEAR",  "name": "NEAR Protocol",   "symbol": "NEAR",  "category": "crypto",    "api_source": "cg", "api_id": "near",             "min_level": 1 },
+    { "id": "UNI",   "name": "Uniswap",         "symbol": "UNI",   "category": "crypto",    "api_source": "cg", "api_id": "uniswap",          "min_level": 1 },
+    { "id": "ATOM",  "name": "Cosmos",          "symbol": "ATOM",  "category": "crypto",    "api_source": "cg", "api_id": "cosmos",           "min_level": 1 },
+    { "id": "APT",   "name": "Aptos",           "symbol": "APT",   "category": "crypto",    "api_source": "cg", "api_id": "aptos",            "min_level": 1 },
+    { "id": "AAPL",  "name": "Apple",           "symbol": "AAPL",  "category": "stock",     "api_source": "fh", "api_id": "AAPL",  "min_level": 1 },
+    { "id": "MSFT",  "name": "Microsoft",       "symbol": "MSFT",  "category": "stock",     "api_source": "fh", "api_id": "MSFT",  "min_level": 1 },
+    { "id": "NVDA",  "name": "NVIDIA",          "symbol": "NVDA",  "category": "stock",     "api_source": "fh", "api_id": "NVDA",  "min_level": 1 },
+    { "id": "GOOGL", "name": "Alphabet",        "symbol": "GOOGL", "category": "stock",     "api_source": "fh", "api_id": "GOOGL", "min_level": 1 },
+    { "id": "AMZN",  "name": "Amazon",          "symbol": "AMZN",  "category": "stock",     "api_source": "fh", "api_id": "AMZN",  "min_level": 1 },
+    { "id": "META",  "name": "Meta Platforms",  "symbol": "META",  "category": "stock",     "api_source": "fh", "api_id": "META",  "min_level": 1 },
+    { "id": "TSLA",  "name": "Tesla",           "symbol": "TSLA",  "category": "stock",     "api_source": "fh", "api_id": "TSLA",  "min_level": 1 },
+    { "id": "JPM",   "name": "JPMorgan Chase",  "symbol": "JPM",   "category": "stock",     "api_source": "fh", "api_id": "JPM",   "min_level": 1 },
+    { "id": "V",     "name": "Visa",            "symbol": "V",     "category": "stock",     "api_source": "fh", "api_id": "V",     "min_level": 1 },
+    { "id": "WMT",   "name": "Walmart",         "symbol": "WMT",   "category": "stock",     "api_source": "fh", "api_id": "WMT",   "min_level": 1 },
+    { "id": "XOM",   "name": "ExxonMobil",      "symbol": "XOM",   "category": "stock",     "api_source": "fh", "api_id": "XOM",   "min_level": 1 },
+    { "id": "AVGO",  "name": "Broadcom",        "symbol": "AVGO",  "category": "stock",     "api_source": "fh", "api_id": "AVGO",  "min_level": 1 },
+    { "id": "MA",    "name": "Mastercard",      "symbol": "MA",    "category": "stock",     "api_source": "fh", "api_id": "MA",    "min_level": 1 },
+    { "id": "COST",  "name": "Costco",          "symbol": "COST",  "category": "stock",     "api_source": "fh", "api_id": "COST",  "min_level": 1 },
+    { "id": "NFLX",  "name": "Netflix",         "symbol": "NFLX",  "category": "stock",     "api_source": "fh", "api_id": "NFLX",  "min_level": 1 },
+    { "id": "AMD",   "name": "AMD",             "symbol": "AMD",   "category": "stock",     "api_source": "fh", "api_id": "AMD",   "min_level": 1 },
+    { "id": "COIN",  "name": "Coinbase",        "symbol": "COIN",  "category": "stock",     "api_source": "fh", "api_id": "COIN",  "min_level": 1 },
+    { "id": "PLTR",  "name": "Palantir",        "symbol": "PLTR",  "category": "stock",     "api_source": "fh", "api_id": "PLTR",  "min_level": 1 },
+    { "id": "MSTR",  "name": "MicroStrategy",   "symbol": "MSTR",  "category": "stock",     "api_source": "fh", "api_id": "MSTR",  "min_level": 1 },
+    { "id": "BA",    "name": "Boeing",          "symbol": "BA",    "category": "stock",     "api_source": "fh", "api_id": "BA",    "min_level": 1 },
+    { "id": "SPX",   "name": "S&P 500",         "symbol": "SPX",   "category": "index",     "api_source": "td", "api_id": "SPX",   "min_level": 1 },
+    { "id": "NDX",   "name": "Nasdaq 100",      "symbol": "NDX",   "category": "index",     "api_source": "td", "api_id": "NDX",   "min_level": 1 },
+    { "id": "DJI",   "name": "Dow Jones",       "symbol": "DJI",   "category": "index",     "api_source": "td", "api_id": "DJI",   "min_level": 1 },
+    { "id": "DAX",   "name": "DAX 40",          "symbol": "DAX",   "category": "index",     "api_source": "td", "api_id": "DAX",   "min_level": 1 },
+    { "id": "CAC",   "name": "CAC 40",          "symbol": "CAC",   "category": "index",     "api_source": "td", "api_id": "CAC",   "min_level": 1 },
+    { "id": "XAU",   "name": "Or",              "symbol": "XAU/USD", "category": "commodity", "api_source": "td", "api_id": "XAU/USD", "min_level": 5 },
+    { "id": "XAG",   "name": "Argent",          "symbol": "XAG/USD", "category": "commodity", "api_source": "td", "api_id": "XAG/USD", "min_level": 5 },
+    { "id": "WTI",   "name": "Pétrole WTI",     "symbol": "WTI/USD", "category": "commodity", "api_source": "td", "api_id": "WTI/USD", "min_level": 5 },
+    { "id": "EURUSD","name": "Euro / Dollar",   "symbol": "EUR/USD", "category": "forex",     "api_source": "td", "api_id": "EUR/USD", "min_level": 1 },
+    { "id": "GBPUSD","name": "Livre / Dollar",  "symbol": "GBP/USD", "category": "forex",     "api_source": "td", "api_id": "GBP/USD", "min_level": 1 },
+    { "id": "USDJPY","name": "Dollar / Yen",    "symbol": "USD/JPY", "category": "forex",     "api_source": "td", "api_id": "USD/JPY", "min_level": 1 },
+    { "id": "VIX",   "name": "Volatility Index","symbol": "VIX",     "category": "risk",      "api_source": "td", "api_id": "VIX",     "min_level": 5 }
+  ]
+}

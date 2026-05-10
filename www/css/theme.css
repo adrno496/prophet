@@ -1,0 +1,169 @@
+/* ============================================================================
+   PROPHET — theme.css
+   Variables design system, dark trader, fonts
+   ============================================================================ */
+
+:root {
+  /* Couleurs principales (palette dark trader) */
+  --bg: #0a0a0a;
+  --bg-elevated: #111111;
+  --card: #141414;
+  --card-hover: #1a1a1a;
+  --border: #262626;
+  --border-strong: #333333;
+
+  /* Sémantique */
+  --neon: #00ff88;
+  --neon-dim: #00cc6a;
+  --red: #ff3366;
+  --red-dim: #cc2952;
+  --gold: #ffd700;
+  --gold-dim: #ccac00;
+  --blue: #3b82f6;
+  --orange: #f97316;
+  --yellow: #facc15;
+
+  /* Texte */
+  --text: #f5f5f5;
+  --text-muted: #999999;
+  --muted: #666666;
+  --text-disabled: #444444;
+
+  /* Catégories d'actifs (badges colorés) */
+  --cat-crypto: #ffa500;
+  --cat-stock: #3b82f6;
+  --cat-index: #a855f7;
+  --cat-commodity: #ffd700;
+  --cat-forex: #14b8a6;
+  --cat-risk: #ef4444;
+
+  /* Espacements (échelle 4px) */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+
+  /* Rayons */
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Ombres */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+  --shadow-neon: 0 0 24px rgba(0, 255, 136, 0.25);
+  --shadow-red: 0 0 24px rgba(255, 51, 102, 0.25);
+  --shadow-gold: 0 0 24px rgba(255, 215, 0, 0.25);
+
+  /* Typographie */
+  --font: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Menlo', monospace;
+
+  --fs-xs: 11px;
+  --fs-sm: 13px;
+  --fs-base: 15px;
+  --fs-md: 17px;
+  --fs-lg: 20px;
+  --fs-xl: 24px;
+  --fs-2xl: 32px;
+  --fs-3xl: 44px;
+  --fs-4xl: 56px;
+
+  /* Animations */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --t-fast: 120ms;
+  --t-base: 200ms;
+  --t-slow: 320ms;
+
+  /* Layout */
+  --header-h: 56px;
+  --tabs-h: 64px;
+  --max-w: 720px;
+}
+
+/* Reset minimal */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--fs-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior-y: none;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+input, textarea, select {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: var(--radius-full);
+}
+
+::selection {
+  background: var(--neon);
+  color: var(--bg);
+}
+
+/* Helpers de couleur sémantique */
+.text-up   { color: var(--neon); }
+.text-down { color: var(--red); }
+.text-gold { color: var(--gold); }
+.text-mute { color: var(--muted); }
+
+.bg-up   { background: var(--neon); color: var(--bg); }
+.bg-down { background: var(--red); color: var(--text); }
+.bg-gold { background: var(--gold); color: var(--bg); }

@@ -1,0 +1,25 @@
+{
+  "name": "prophet",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PROPHET — Polymarket Fantasy. €1000 virtual capital, leverage 10x, global rankings.",
+  "scripts": {
+    "dev": "npx serve www -p 3000",
+    "android:sync": "npx cap sync android",
+    "android:open": "npx cap open android",
+    "android:run": "npx cap run android",
+    "android:add": "npx cap add android",
+    "supabase:link": "supabase link --project-ref guevmgdxznrvxcjvvzyu",
+    "supabase:push": "supabase db push"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2",
+    "serve": "^14.2.4"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/splash-screen": "^6.0.2",
+    "@capacitor/status-bar": "^6.0.2"
+  }
+}
