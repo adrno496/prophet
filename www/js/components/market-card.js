@@ -7,6 +7,8 @@ import { escHTML, htmlRaw } from '../utils/escHTML.js'
 import { formatPrice, formatPct, formatEURCompact } from '../utils/format.js'
 import { startCountdown } from './countdown.js'
 import { getLang } from '../i18n/index.js'
+import { fetchPriceHistory } from '../api/prices.js'
+import { renderSparkline } from './chart.js'
 
 const TF_LABELS = {
   15:   { fr: '15 min',   en: '15 min'  },
@@ -75,6 +77,9 @@ export function renderMarketCard ({ asset, price, markets = [], userLevel = 1, o
           ${change == null ? '' : htmlRaw`<span class="${changeClass}">${changeArrow} ${escHTML(formatPct(Math.abs(change)))}</span>`}
         </div>
       </div>
+      <div class="pm-spark">
+        <canvas class="pm-spark-canvas" data-spark-asset="${escHTML(asset.id)}"></canvas>
+      </div>
     </div>
 
     ${locked ? htmlRaw`
@@ -139,6 +144,32 @@ export function renderMarketCard ({ asset, price, markets = [], userLevel = 1, o
     const target = el.getAttribute('data-cd')
     if (target) startCountdown(el, target)
   })
+
+  // Sparkline lazy : seulement pour les directional crypto (1h history)
+  if (asset.category === 'crypto') {
+    const canvas = card.querySelector('[data-spark-asset]')
+    if (canvas) {
+      // Lazy fetch + render quand la card est dans le viewport
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(async (entry) => {
+          if (entry.isIntersecting) {
+            observer.disconnect()
+            const series = await fetchPriceHistory(asset.id, 1)
+            if (series && series.length >= 3) {
+              try { await renderSparkline(canvas, series) } catch (_) { /* CDN bloqué */ }
+            } else {
+              canvas.style.display = 'none'
+            }
+          }
+        })
+      }, { rootMargin: '100px' })
+      observer.observe(canvas)
+    }
+  } else {
+    // Pas de sparkline pour les autres catégories (volume insuffisant)
+    const canvas = card.querySelector('[data-spark-asset]')
+    if (canvas) canvas.parentElement.style.display = 'none'
+  }
 
   return card
 }

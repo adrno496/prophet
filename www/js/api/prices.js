@@ -8,6 +8,32 @@ import { store } from '../state.js'
 import { fetchCoinGeckoCryptos } from './coingecko.js'
 import { fetchForexPrices } from './frankfurter.js'
 
+// Cache mémoire des historiques pour sparklines (TTL 2 min)
+const historyCache = new Map()
+
+// Fetch les N dernières heures de prix pour un asset (pour sparkline)
+export async function fetchPriceHistory (assetId, hours = 1) {
+  const key = `${assetId}:${hours}`
+  const cached = historyCache.get(key)
+  if (cached && Date.now() - cached.ts < 120_000) return cached.data
+
+  const since = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString()
+  const { data, error } = await sb
+    .from('prices')
+    .select('price, timestamp')
+    .eq('asset_id', assetId)
+    .gte('timestamp', since)
+    .order('timestamp', { ascending: true })
+    .limit(60)
+  if (error || !data) {
+    historyCache.set(key, { ts: Date.now(), data: [] })
+    return []
+  }
+  const series = data.map(r => Number(r.price))
+  historyCache.set(key, { ts: Date.now(), data: series })
+  return series
+}
+
 // Cache en mémoire { asset_id: { price, change_24h, timestamp } }
 const priceCache = new Map()
 

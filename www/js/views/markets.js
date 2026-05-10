@@ -32,8 +32,17 @@ async function loadConfig () {
   }
 }
 
+// Chips d'asset dynamiques (filtre rapide)
+const ASSET_CHIPS = [
+  { id: 'BTC',  emoji: '₿' },
+  { id: 'ETH',  emoji: 'Ξ' },
+  { id: 'SOL',  emoji: '◎' },
+  { id: 'DOGE', emoji: '🐕' }
+]
+
 export async function mountMarkets (rootEl) {
   let topic = 'Tous'
+  let assetChip = null   // 'BTC'|'ETH'|'SOL'|'DOGE'|null
   let search = ''
   let markets = []
   let prices = {}
@@ -66,6 +75,17 @@ export async function mountMarkets (rootEl) {
           ${topics.map(tt => htmlRaw`
             <button class="pm-cat ${tt === topic ? 'active' : ''}" data-topic="${escHTML(tt)}">
               ${escHTML(tt)}
+            </button>
+          `).join('')}
+        </div>
+
+        <div class="pm-chips">
+          <button class="pm-chip ${!assetChip ? 'active' : ''}" data-chip="">
+            ${lang === 'fr' ? 'Tous actifs' : 'All assets'}
+          </button>
+          ${ASSET_CHIPS.map(c => htmlRaw`
+            <button class="pm-chip ${assetChip === c.id ? 'active' : ''}" data-chip="${escHTML(c.id)}">
+              <span style="margin-right:4px">${c.emoji}</span>${escHTML(c.id)}
             </button>
           `).join('')}
         </div>
@@ -119,6 +139,12 @@ export async function mountMarkets (rootEl) {
         render()
       })
     })
+    rootEl.querySelectorAll('[data-chip]').forEach(b => {
+      b.addEventListener('click', () => {
+        assetChip = b.getAttribute('data-chip') || null
+        render()
+      })
+    })
 
     const searchInput = rootEl.querySelector('#market-search')
     if (searchInput) {
@@ -142,6 +168,10 @@ export async function mountMarkets (rootEl) {
 
     // Filtre par topic
     let filtered = markets
+    // Filtre par asset chip (priorité haute)
+    if (assetChip) {
+      filtered = filtered.filter(m => m.asset_id === assetChip)
+    }
     if (topic === 'Crypto Live') {
       filtered = filtered.filter(m => m.market_type === 'directional')
     } else if (topic === 'Trending') {

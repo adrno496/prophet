@@ -14,6 +14,8 @@ import { fetchOwnAchievements, ACHIEVEMENTS_META } from '../api/achievements.js'
 import { PROVIDERS, getProvider } from '../ai/providers.js'
 import { loadAISettings, saveAISettings, validateApiKey } from '../ai/settings.js'
 import { pingAI, QuotaExceededError } from '../ai/client.js'
+import { fetchMyBalanceHistory, fetchAIAccuracyByDay } from '../api/profile-charts.js'
+import { renderPnLChart, renderAccuracyChart } from '../components/chart.js'
 
 // Génère une couleur déterministe à partir du pseudo (palette PULSE)
 function avatarColor (username) {
@@ -88,6 +90,24 @@ export function mountProfile (rootEl) {
           <div class="stat">
             <div class="stat-label">${escHTML(t('dashboard.stats_winrate'))}</div>
             <div class="stat-value">${escHTML(formatWinrate(profile.wins, profile.losses))}</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-title" style="margin-bottom:var(--sp-3)">
+            📈 ${lang === 'fr' ? 'Progression du solde' : 'Balance progression'}
+          </div>
+          <div style="height:180px">
+            <canvas id="pnl-chart"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-title" style="margin-bottom:var(--sp-3)">
+            🤖 ${lang === 'fr' ? 'Track record IA (14 j)' : 'AI track record (14d)'}
+          </div>
+          <div style="height:160px">
+            <canvas id="ai-accuracy-chart"></canvas>
           </div>
         </div>
 
@@ -307,6 +327,40 @@ export function mountProfile (rootEl) {
   async function loadAchievements () {
     achievements = await fetchOwnAchievements()
     render()
+    // Render des charts après le DOM update
+    setTimeout(loadCharts, 50)
+  }
+
+  let pnlChartInst = null
+  let aiChartInst = null
+
+  async function loadCharts () {
+    try {
+      const pnlEl = rootEl.querySelector('#pnl-chart')
+      if (pnlEl) {
+        const history = await fetchMyBalanceHistory(30)
+        if (history.length >= 2) {
+          if (pnlChartInst) pnlChartInst.destroy()
+          pnlChartInst = await renderPnLChart(pnlEl, history)
+        } else {
+          // Pas assez de données → message
+          pnlEl.parentElement.innerHTML = `<div class="text-mute" style="text-align:center;padding:var(--sp-4) 0;font-size:var(--fs-sm)">${getLang() === 'fr' ? 'Pas encore d\'historique. Place quelques paris !' : 'No history yet. Place some bets!'}</div>`
+        }
+      }
+
+      const aiEl = rootEl.querySelector('#ai-accuracy-chart')
+      if (aiEl) {
+        const accuracy = await fetchAIAccuracyByDay(14)
+        if (accuracy.length > 0) {
+          if (aiChartInst) aiChartInst.destroy()
+          aiChartInst = await renderAccuracyChart(aiEl, accuracy)
+        } else {
+          aiEl.parentElement.innerHTML = `<div class="text-mute" style="text-align:center;padding:var(--sp-4) 0;font-size:var(--fs-sm)">${getLang() === 'fr' ? 'Aucune prédiction IA résolue.' : 'No resolved AI predictions yet.'}</div>`
+        }
+      }
+    } catch (e) {
+      console.warn('[profile] charts error', e)
+    }
   }
 
   render()
@@ -318,5 +372,7 @@ export function mountProfile (rootEl) {
   return () => {
     if (typeof unsubProfile === 'function') unsubProfile()
     window.removeEventListener('lang-changed', render)
+    if (pnlChartInst) { try { pnlChartInst.destroy() } catch {} }
+    if (aiChartInst) { try { aiChartInst.destroy() } catch {} }
   }
 }

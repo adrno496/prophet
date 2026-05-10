@@ -7,6 +7,7 @@ import { escHTML, htmlRaw } from '../utils/escHTML.js'
 import { formatEUR, formatPrice, formatPct } from '../utils/format.js'
 import { startCountdown } from './countdown.js'
 import { getLang } from '../i18n/index.js'
+import { showResolutionTicket } from './resolution-ticket.js'
 
 const STATUS_BADGE = {
   open:        { fr: 'Ouverte',     en: 'Open',        cls: 'badge-gold' },
@@ -26,7 +27,11 @@ export function renderPositionCard ({ position, market, asset }) {
   const arrow = position.side === 'UP' || position.side === 'YES' ? '▲' : '▼'
 
   const card = document.createElement('div')
-  card.className = 'card'
+  card.className = 'card card-hover'
+  if (position.status !== 'open') {
+    card.style.cursor = 'pointer'
+    card.addEventListener('click', () => showResolutionTicket(position.id))
+  }
   card.innerHTML = htmlRaw`
     <div class="row-between" style="margin-bottom:var(--sp-2)">
       <div class="row" style="gap:var(--sp-2);min-width:0">

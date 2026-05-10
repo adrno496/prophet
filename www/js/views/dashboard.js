@@ -12,6 +12,7 @@ import { callAI, QuotaExceededError } from '../ai/client.js'
 import { hasAI } from '../ai/settings.js'
 import { buildCoachPrompt, parseCoachResponse } from '../ai/coach-prompt.js'
 import { renderAICoachCard } from '../components/ai-coach-card.js'
+import { mountTournamentBanner } from '../components/tournament-banner.js'
 import { openTradeModal } from '../components/trade-modal.js'
 import { sb } from '../supabase-client.js'
 import { checkAchievements } from '../api/achievements.js'
@@ -120,6 +121,8 @@ export function mountDashboard (rootEl) {
           </div>
         </div>
 
+        <div id="tournament-banner-mount"></div>
+
         <div class="section" id="dash-coach-section">
           <div class="row-between">
             <div class="section-title" style="margin-bottom:0">🤖 ${lang === 'fr' ? 'IA Coach du jour' : 'AI Coach today'}</div>
@@ -174,6 +177,9 @@ export function mountDashboard (rootEl) {
 
     renderPositions()
     renderCoach()
+    // Mount tournament banner (async, ne bloque pas)
+    const tournamentMount = rootEl.querySelector('#tournament-banner-mount')
+    if (tournamentMount) mountTournamentBanner(tournamentMount).catch(e => console.warn('[tournament] mount error', e))
   }
 
   function renderPositions () {

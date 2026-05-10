@@ -5,6 +5,20 @@
 
 import { sb } from '../supabase-client.js'
 
+// Period leaderboard via RPC (daily/weekly/monthly/alltime + métrique balance/pnl/winrate)
+export async function fetchPeriodLeaderboard (period = 'alltime', metric = 'balance', limit = 100) {
+  const { data, error } = await sb.rpc('period_leaderboard', {
+    p_period: period,
+    p_metric: metric,
+    p_limit: limit
+  })
+  if (error) {
+    console.warn('[leaderboard] period error', error)
+    return []
+  }
+  return data || []
+}
+
 export async function fetchLeaderboard (rankType = 'balance', limit = 100) {
   const { data, error } = await sb
     .from('leaderboard_cache')
