@@ -4,8 +4,8 @@
 
 export const fr = {
   app: {
-    name: 'PROPHET',
-    tagline: 'Polymarket Fantasy · Levier 10x'
+    name: 'PULSE PREDICT',
+    tagline: 'Le marché de prédictions virtuel mondial · Levier 10x'
   },
   login: {
     bullet_capital: '🎁 €1000 virtuels offerts',

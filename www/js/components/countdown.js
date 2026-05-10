@@ -34,6 +34,14 @@ export function startCountdown (el, targetIso, onExpire) {
     const now = Date.now()
     const remaining = Math.max(0, Math.floor((target - now) / 1000))
     el.textContent = fmt(remaining)
+
+    // Pulse rouge dans les 30 dernières secondes (urgence)
+    if (remaining > 0 && remaining <= 30) {
+      el.classList.add('timer--critical')
+    } else {
+      el.classList.remove('timer--critical')
+    }
+
     if (remaining <= 0) {
       stop()
       onExpire?.()

@@ -1,24 +1,28 @@
 /* ============================================================================
-   PROPHET — theme.css
-   Variables design system, dark trader, fonts
+   PULSE PREDICT — theme.css
+   Variables design system, dark finance premium, fonts
    ============================================================================ */
 
 :root {
-  /* Couleurs principales (palette dark trader) */
-  --bg: #0a0a0a;
-  --bg-elevated: #111111;
-  --card: #141414;
-  --card-hover: #1a1a1a;
-  --border: #262626;
-  --border-strong: #333333;
+  /* Palette PULSE PREDICT — Dark Finance Premium */
+  --bg: #080B12;
+  --bg-elevated: #0A0F1C;
+  --card: #0E1420;
+  --card-hover: #141C2E;
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.14);
 
   /* Sémantique */
-  --neon: #00ff88;
-  --neon-dim: #00cc6a;
-  --red: #ff3366;
-  --red-dim: #cc2952;
-  --gold: #ffd700;
-  --gold-dim: #ccac00;
+  --neon: #00E472;        /* vert profit */
+  --neon-dim: #00B359;
+  --red: #FF3B5C;         /* rouge perte */
+  --red-dim: #CC2244;
+  --gold: #FFB547;        /* warning / accent gold */
+  --gold-dim: #CC8B33;
+  --primary: #63CAFF;     /* bleu électrique CTA */
+  --primary-dim: #3B8BCC;
+  --premium: #A78BFA;     /* violet premium */
+  --warning: #FFB547;
   --blue: #3b82f6;
   --orange: #f97316;
   --yellow: #facc15;

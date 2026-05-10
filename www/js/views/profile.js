@@ -11,6 +11,30 @@ import { escHTML, htmlRaw } from '../utils/escHTML.js'
 import { formatEUR, formatWinrate } from '../utils/format.js'
 import { toast } from '../components/toast.js'
 import { fetchOwnAchievements, ACHIEVEMENTS_META } from '../api/achievements.js'
+import { PROVIDERS, getProvider } from '../ai/providers.js'
+import { loadAISettings, saveAISettings, validateApiKey } from '../ai/settings.js'
+import { pingAI, QuotaExceededError } from '../ai/client.js'
+
+// Génère une couleur déterministe à partir du pseudo (palette PULSE)
+function avatarColor (username) {
+  const palette = [
+    'linear-gradient(135deg,#63CAFF,#3B8BCC)',
+    'linear-gradient(135deg,#00E472,#00B359)',
+    'linear-gradient(135deg,#FFB547,#CC8B33)',
+    'linear-gradient(135deg,#A78BFA,#7C3AED)',
+    'linear-gradient(135deg,#FF3B5C,#CC2244)',
+    'linear-gradient(135deg,#14B8A6,#0F9080)',
+    'linear-gradient(135deg,#F472B6,#BE185D)'
+  ]
+  let hash = 0
+  for (const c of (username || 'user')) hash = (hash * 31 + c.charCodeAt(0)) | 0
+  return palette[Math.abs(hash) % palette.length]
+}
+
+function avatarInitial (username) {
+  const s = (username || '?').replace(/^user_/, '').trim()
+  return (s[0] || '?').toUpperCase()
+}
 
 export function mountProfile (rootEl) {
   let achievements = []
@@ -31,12 +55,18 @@ export function mountProfile (rootEl) {
       <div class="container stack-6">
 
         <div class="card-elevated card">
-          <div class="row-between">
-            <div class="stack-2">
-              <div class="text-mute" style="font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:0.06em">${escHTML(t('profile.username'))}</div>
-              <div style="font-size:var(--fs-xl);font-weight:800">${escHTML(profile.username)}</div>
+          <div class="row" style="gap:var(--sp-3);align-items:center">
+            <div class="profile-avatar" style="background:${avatarColor(profile.username)}">
+              ${escHTML(avatarInitial(profile.username))}
             </div>
-            <span class="level-chip">${escHTML(t('header.level', { n: profile.level }))}</span>
+            <div class="stack" style="gap:2px;flex:1;min-width:0">
+              <div class="text-mute" style="font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:0.06em">${escHTML(t('profile.username'))}</div>
+              <div style="font-size:var(--fs-xl);font-weight:800;letter-spacing:-0.01em" class="truncate">${escHTML(profile.username)}</div>
+              <div class="row" style="gap:var(--sp-2);margin-top:2px">
+                <span class="level-chip">${escHTML(t('header.level', { n: profile.level }))}</span>
+                <span class="badge badge-up">${escHTML(profile.total_trades || 0)} trades</span>
+              </div>
+            </div>
           </div>
           <div class="spacer-2"></div>
           <button id="btn-edit-username" class="btn btn-link">✏️ ${lang === 'fr' ? 'Changer pseudo' : 'Edit username'}</button>
@@ -86,6 +116,11 @@ export function mountProfile (rootEl) {
           </div>
         </div>
 
+        <div class="card stack-3" id="ai-settings-card">
+          <div style="font-weight:700">🤖 ${lang === 'fr' ? 'Assistant IA' : 'AI Assistant'}</div>
+          ${renderAISection(lang)}
+        </div>
+
         <div class="stack-3">
           <button id="btn-reset" class="btn btn-ghost btn-block">
             ${escHTML(t('profile.reset_btn'))}
@@ -104,6 +139,130 @@ export function mountProfile (rootEl) {
     rootEl.querySelector('#btn-reset').addEventListener('click', onReset)
     rootEl.querySelector('#btn-signout').addEventListener('click', onSignOut)
     rootEl.querySelector('#btn-edit-username').addEventListener('click', onEditUsername)
+
+    // AI section
+    bindAISection()
+  }
+
+  function renderAISection (lang) {
+    const s = loadAISettings()
+    const p = s.providerObj
+    const optionsHtml = Object.values(PROVIDERS).map(prov => {
+      const sel = prov.id === s.provider ? 'selected' : ''
+      const tag = prov.bundled ? ' ✨ Gratuit' : ''
+      return `<option value="${escHTML(prov.id)}" ${sel}>${escHTML(prov.name + tag)}</option>`
+    }).join('')
+
+    const modelOptions = (p.models || []).map(m => {
+      const id = typeof m === 'string' ? m : m.id
+      const name = typeof m === 'string' ? m : m.name
+      const sel = id === (s.model || p.defaultModel) ? 'selected' : ''
+      return `<option value="${escHTML(id)}" ${sel}>${escHTML(name)}</option>`
+    }).join('')
+
+    return `
+      <select id="ai-provider" class="card" style="border:1px solid var(--border-strong);padding:var(--sp-2) var(--sp-3);background:var(--bg-elevated);font-size:var(--fs-sm)">
+        ${optionsHtml}
+      </select>
+
+      <select id="ai-model" class="card" style="border:1px solid var(--border-strong);padding:var(--sp-2) var(--sp-3);background:var(--bg-elevated);font-size:var(--fs-sm)">
+        ${modelOptions}
+      </select>
+
+      ${p.bundled ? `
+        <div style="background:rgba(0,228,114,0.08);border:1px solid rgba(0,228,114,0.3);border-radius:var(--radius);padding:var(--sp-3);font-size:var(--fs-sm)">
+          ✓ ${lang === 'fr' ? 'Aucune configuration nécessaire — 30 messages/jour offerts' : 'No setup needed — 30 free messages/day'}
+        </div>
+      ` : `
+        <input
+          type="password"
+          id="ai-key"
+          class="card"
+          autocomplete="off"
+          placeholder="${escHTML(p.apiKeyLabel || 'API Key')}"
+          value="${escHTML(s.apiKey || '')}"
+          style="border:1px solid var(--border-strong);padding:var(--sp-2) var(--sp-3);background:var(--bg-elevated);font-size:var(--fs-sm)"
+        />
+        <div class="text-mute" style="font-size:var(--fs-xs)">
+          ${lang === 'fr' ? '🔒 Stocké en localStorage uniquement, jamais envoyé sur PROPHET.' : '🔒 Stored in localStorage only, never sent to PULSE servers.'}
+        </div>
+      `}
+
+      <div class="row" style="gap:var(--sp-2)">
+        <button id="btn-ai-save" class="btn btn-primary" style="flex:1">
+          ${lang === 'fr' ? 'Enregistrer' : 'Save'}
+        </button>
+        <button id="btn-ai-test" class="btn btn-ghost" style="flex:1">
+          ${lang === 'fr' ? '🔌 Tester' : '🔌 Test'}
+        </button>
+      </div>
+      <div id="ai-status" class="text-mute" style="font-size:var(--fs-xs);min-height:18px"></div>
+    `
+  }
+
+  function bindAISection () {
+    const providerSel = rootEl.querySelector('#ai-provider')
+    const modelSel = rootEl.querySelector('#ai-model')
+    const keyInput = rootEl.querySelector('#ai-key')
+    const saveBtn = rootEl.querySelector('#btn-ai-save')
+    const testBtn = rootEl.querySelector('#btn-ai-test')
+    const statusEl = rootEl.querySelector('#ai-status')
+
+    if (!providerSel || !saveBtn) return
+
+    providerSel.addEventListener('change', () => {
+      // Switch provider → re-render la section pour adapter clé/modèles
+      const newProvider = providerSel.value
+      saveAISettings({ provider: newProvider, model: '' })
+      const card = rootEl.querySelector('#ai-settings-card')
+      if (card) {
+        const lang = getLang()
+        card.innerHTML = `<div style="font-weight:700">🤖 ${lang === 'fr' ? 'Assistant IA' : 'AI Assistant'}</div>` + renderAISection(lang)
+        bindAISection()
+      }
+    })
+
+    saveBtn.addEventListener('click', () => {
+      const provider = providerSel.value
+      const model = modelSel ? modelSel.value : ''
+      const apiKey = keyInput ? keyInput.value.trim() : ''
+      const validation = validateApiKey(provider, apiKey)
+      if (!validation.ok) {
+        statusEl.textContent = getLang() === 'fr'
+          ? '❌ Clé API invalide (' + validation.reason + ')'
+          : '❌ Invalid API key (' + validation.reason + ')'
+        statusEl.style.color = 'var(--red)'
+        return
+      }
+      saveAISettings({ provider, apiKey, model })
+      statusEl.textContent = getLang() === 'fr' ? '✓ Enregistré' : '✓ Saved'
+      statusEl.style.color = 'var(--neon)'
+      toast.success(t('toast.saved'))
+    })
+
+    testBtn.addEventListener('click', async () => {
+      statusEl.textContent = getLang() === 'fr' ? '⏳ Ping IA en cours…' : '⏳ Pinging AI…'
+      statusEl.style.color = 'var(--text-muted)'
+      testBtn.disabled = true
+      try {
+        const reply = await pingAI()
+        statusEl.textContent = '✓ ' + reply.slice(0, 80)
+        statusEl.style.color = 'var(--neon)'
+        toast.success(getLang() === 'fr' ? 'IA opérationnelle' : 'AI working')
+      } catch (e) {
+        let msg = e.message || 'erreur inconnue'
+        if (e instanceof QuotaExceededError) {
+          msg = getLang() === 'fr'
+            ? `Quota épuisé (${e.used}/${e.quota}). Réessaie demain ou ajoute ta clé.`
+            : `Quota exhausted (${e.used}/${e.quota}). Try tomorrow or add your key.`
+        }
+        statusEl.textContent = '❌ ' + msg
+        statusEl.style.color = 'var(--red)'
+        toast.error(msg, 6000)
+      } finally {
+        testBtn.disabled = false
+      }
+    })
   }
 
   async function onEditUsername () {

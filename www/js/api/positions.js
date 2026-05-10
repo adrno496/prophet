@@ -48,9 +48,10 @@ export function subscribeToOwnPositions () {
     .channel('positions-' + userId)
     .on('postgres_changes',
       { event: '*', schema: 'public', table: 'positions', filter: `user_id=eq.${userId}` },
-      () => {
-        // Trigger reload via store event
-        window.dispatchEvent(new CustomEvent('positions-changed'))
+      (payload) => {
+        // Le payload contient { eventType, new, old } — utile pour détecter
+        // les transitions 'open' → 'won'/'lost'/'liquidated' (celebration).
+        window.dispatchEvent(new CustomEvent('positions-changed', { detail: payload }))
       }
     )
     .subscribe()

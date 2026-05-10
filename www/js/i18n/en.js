@@ -4,8 +4,8 @@
 
 export const en = {
   app: {
-    name: 'PROPHET',
-    tagline: 'Polymarket Fantasy · Up to 10x leverage'
+    name: 'PULSE PREDICT',
+    tagline: 'The global virtual prediction market · Up to 10x leverage'
   },
   login: {
     bullet_capital: '🎁 €1,000 virtual capital',

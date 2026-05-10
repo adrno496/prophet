@@ -19,7 +19,7 @@ export function mountHeader (rootEl) {
 
     rootEl.innerHTML = htmlRaw`
       <div class="container header-content">
-        <div class="header-brand">PROPHET</div>
+        <div class="header-brand">PULSE</div>
         <div class="header-meta">
           <span class="truncate" style="max-width:80px">${escHTML(username)}</span>
           <span class="level-chip">${escHTML(t('header.level', { n: level }))}</span>

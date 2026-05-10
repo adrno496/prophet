@@ -91,11 +91,34 @@ export function mountLeaderboard (rootEl) {
       return
     }
 
-    list.innerHTML = rows.map(r => {
+    // Podium top 3 (visuel)
+    const top3 = rows.slice(0, 3)
+    const rest = rows.slice(3)
+    const podiumHtml = top3.length >= 3 ? htmlRaw`
+      <div class="podium">
+        <div class="podium-step podium-step--2">
+          <div class="podium-medal">🥈</div>
+          <div class="podium-name">${escHTML(top3[1].username)}</div>
+          <div class="podium-value">${escHTML(formatValue(activeTab, top3[1].value))}</div>
+        </div>
+        <div class="podium-step podium-step--1">
+          <div class="podium-medal">🥇</div>
+          <div class="podium-name">${escHTML(top3[0].username)}</div>
+          <div class="podium-value">${escHTML(formatValue(activeTab, top3[0].value))}</div>
+        </div>
+        <div class="podium-step podium-step--3">
+          <div class="podium-medal">🥉</div>
+          <div class="podium-name">${escHTML(top3[2].username)}</div>
+          <div class="podium-value">${escHTML(formatValue(activeTab, top3[2].value))}</div>
+        </div>
+      </div>
+    ` : ''
+
+    list.innerHTML = podiumHtml + rest.map(r => {
       const isMe = meId && r.user_id === meId
       const m = medal(r.rank)
       return htmlRaw`
-        <div class="card row-between" style="${isMe ? 'border-color:var(--gold);background:rgba(255,215,0,0.04)' : ''}">
+        <div class="card row-between" style="${isMe ? 'border-color:var(--gold);background:rgba(255,181,71,0.04)' : ''}">
           <div class="row" style="gap:var(--sp-3);min-width:0">
             <span style="font-family:var(--font-mono);font-weight:700;width:32px;text-align:right">
               ${m || '#' + escHTML(r.rank)}

@@ -1,13 +1,13 @@
 {
-  "name": "PROPHET — Polymarket Fantasy",
-  "short_name": "Prophet",
-  "description": "Predict markets with €1,000 virtual capital and up to 10x leverage. Global rankings.",
+  "name": "PULSE PREDICT — Prediction Markets",
+  "short_name": "Pulse",
+  "description": "Le marché de prédictions virtuel mondial. Cryptos, macro, géopolitique, sport.",
   "start_url": "index.html",
   "scope": ".",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#0a0a0a",
-  "background_color": "#0a0a0a",
+  "theme_color": "#080B12",
+  "background_color": "#080B12",
   "icons": [
     {
       "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 192 192'><rect width='192' height='192' fill='%230a0a0a' rx='32'/><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%25' stop-color='%2300ff88'/><stop offset='100%25' stop-color='%23ffd700'/></linearGradient></defs><text x='50%25' y='62%25' font-family='-apple-system,Inter,sans-serif' font-size='120' font-weight='900' text-anchor='middle' fill='url(%23g)'>P</text></svg>",

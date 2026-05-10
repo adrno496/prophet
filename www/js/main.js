@@ -5,6 +5,7 @@
 
 import { requireAuth, onAuthChange } from './auth.js'
 import { startTicking, tickAll } from './tick.js'
+import { celebrateWin, celebrateLoss } from './components/celebration.js'
 import { store } from './state.js'
 import { mountHeader } from './components/header.js'
 import { mountTabs } from './components/bottom-tabs.js'
@@ -90,8 +91,23 @@ async function boot () {
 
   // Démarrer le tick auto 5min (live data refresh)
   startTicking()
-  // Premier tick immédiat (en arrière-plan, ne bloque pas la vue)
   tickAll().catch(() => {})
+
+  // Listener global : célébration win/loss quand une position résout via Realtime
+  // (le subscribeToOwnPositions est démarré par dashboard/positions, mais le
+  //  listener vit ici pour fonctionner même si la vue active n'est pas concernée)
+  window.addEventListener('positions-changed', (e) => {
+    const payload = e.detail
+    if (!payload || payload.eventType !== 'UPDATE') return
+    const newRow = payload.new, oldRow = payload.old
+    if (!newRow || !oldRow) return
+    if (oldRow.status === 'open' && newRow.status === 'won') {
+      const amount = Number(newRow.pnl || 0) + Number(newRow.stake || 0)
+      celebrateWin(amount)
+    } else if (oldRow.status === 'open' && (newRow.status === 'lost' || newRow.status === 'liquidated')) {
+      celebrateLoss(newRow.stake || 0)
+    }
+  })
 
   // Synchro hash → tabs (back button)
   window.addEventListener('hashchange', () => {

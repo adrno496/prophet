@@ -11,6 +11,8 @@ import { formatEUR, formatPrice } from '../utils/format.js'
 import { exposure, calcPnL, maxLeverage, liquidationPrice, fundingFeePerHour } from '../utils/leverage.js'
 import { startCountdown } from './countdown.js'
 import { toast } from './toast.js'
+import { hapticImpact, hapticSuccess, hapticError } from '../utils/haptic.js'
+import { confirmBet } from './bet-confirm.js'
 
 const TF_LABELS = {
   15: '15 min',
@@ -182,10 +184,23 @@ export function openTradeModal ({ asset, market, price, presetSide }) {
   async function submit (side) {
     const upBtn = sheet.querySelector('#trade-up')
     const downBtn = sheet.querySelector('#trade-down')
+
+    // Étape 1 : modal de confirmation avec récap
+    const potentialWin = calcPnL({ stake, leverage, won: true, movePct: 1 })
+    const confirmed = await confirmBet({
+      asset, market, side, stake, leverage,
+      potentialWin: stake + potentialWin,
+      isEvent
+    })
+    if (!confirmed) return
+
     upBtn.disabled = true
     downBtn.disabled = true
+    hapticImpact()
+
     try {
       await placeBet({ marketId: market.id, side, stake, leverage })
+      hapticSuccess()
       const lang = getLang()
       toast.success(lang === 'fr'
         ? `Position ${side} ouverte · ${formatEUR(stake)} · ${leverage}x`
@@ -194,6 +209,7 @@ export function openTradeModal ({ asset, market, price, presetSide }) {
       window.dispatchEvent(new CustomEvent('positions-changed'))
       closeTradeModal()
     } catch (e) {
+      hapticError()
       toast.error(e.message || t('toast.error_generic'))
       upBtn.disabled = false
       downBtn.disabled = false

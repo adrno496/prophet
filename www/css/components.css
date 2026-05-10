@@ -452,7 +452,243 @@
 
 .toast-success { border-color: var(--neon); }
 .toast-error { border-color: var(--red); }
-.toast-info { border-color: var(--gold); }
+.toast-info { border-color: var(--primary); }
+.toast-warning { border-color: var(--warning); }
+
+/* Timer critique : pulse rouge dans les 30 dernières secondes */
+.timer--critical {
+  color: var(--red) !important;
+  animation: timer-pulse 0.6s ease-in-out infinite;
+}
+
+@keyframes timer-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(1.06); }
+}
+
+/* ========================================================================
+   Bet Confirmation modal (centered, over trade-modal)
+   ======================================================================== */
+.bet-confirm-card {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -45%);
+  width: calc(100vw - var(--sp-6));
+  max-width: 380px;
+  background: linear-gradient(180deg, var(--card-hover), var(--card));
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-5) var(--sp-4) var(--sp-4);
+  box-shadow: var(--shadow-lg);
+  animation: bc-pop 0.22s var(--ease) both;
+}
+
+@keyframes bc-pop {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.92); }
+  100% { opacity: 1; transform: translate(-50%, -45%) scale(1); }
+}
+
+.bet-confirm-head {
+  text-align: center;
+  margin-bottom: var(--sp-3);
+}
+
+.bet-confirm-title {
+  font-size: var(--fs-md);
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.bet-confirm-sub {
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+.bet-confirm-side {
+  text-align: center;
+  font-size: var(--fs-xl);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  margin: var(--sp-3) 0;
+}
+
+.bet-confirm-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-4);
+  padding: var(--sp-3);
+  background: var(--bg-elevated);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.bet-confirm-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--fs-sm);
+}
+
+.bet-confirm-row span { color: var(--text-muted); }
+.bet-confirm-row strong { font-family: var(--font-mono); font-weight: 700; }
+
+.bet-confirm-row-highlight {
+  padding-top: var(--sp-2);
+  border-top: 1px solid var(--border);
+  font-size: var(--fs-base);
+}
+
+.bet-confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: var(--sp-3);
+}
+
+/* ========================================================================
+   Celebration popup (win / loss)
+   ======================================================================== */
+.celebrate-popup {
+  position: fixed;
+  left: 50%;
+  top: 30%;
+  transform: translate(-50%, -50%) scale(0.5);
+  z-index: 400;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 200ms var(--ease), transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.celebrate-popup.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.celebrate-inner {
+  background: var(--card);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-xl);
+  padding: var(--sp-6) var(--sp-8);
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  min-width: 280px;
+}
+
+.celebrate-emoji {
+  font-size: 64px;
+  line-height: 1;
+  margin-bottom: var(--sp-3);
+}
+
+.celebrate-label {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--sp-2);
+}
+
+.celebrate-amount {
+  font-size: var(--fs-3xl);
+  font-weight: 900;
+  font-family: var(--font-mono);
+  background: linear-gradient(180deg, var(--neon), var(--primary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.celebrate-loss .celebrate-inner {
+  border-color: var(--red);
+}
+.celebrate-loss .celebrate-amount {
+  background: none;
+  -webkit-text-fill-color: initial;
+  color: var(--red);
+}
+
+/* ========================================================================
+   Profile avatar (initiales colorées)
+   ======================================================================== */
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  font-weight: 900;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: var(--shadow);
+  letter-spacing: -0.02em;
+}
+
+/* ========================================================================
+   Leaderboard podium top 3
+   ======================================================================== */
+.podium {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  gap: var(--sp-2);
+  align-items: end;
+  margin-bottom: var(--sp-4);
+}
+
+.podium-step {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--sp-3);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.podium-step--1 {
+  background: linear-gradient(180deg, rgba(255,181,71,0.18), rgba(255,181,71,0.04));
+  border-color: rgba(255,181,71,0.5);
+  padding-top: var(--sp-4);
+  padding-bottom: var(--sp-4);
+}
+
+.podium-step--2 {
+  background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.02));
+  border-color: rgba(255,255,255,0.2);
+}
+
+.podium-step--3 {
+  background: linear-gradient(180deg, rgba(167,139,250,0.14), rgba(167,139,250,0.04));
+  border-color: rgba(167,139,250,0.4);
+}
+
+.podium-medal {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.podium-name {
+  font-weight: 800;
+  font-size: var(--fs-sm);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.podium-value {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--text-muted);
+}
 
 @keyframes toast-in {
   from { transform: translateY(-12px); opacity: 0; }
