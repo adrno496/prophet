@@ -126,4 +126,8 @@ export function mountLeaderboard (rootEl) {
   render()
   loadTab()
   window.addEventListener('lang-changed', render)
+
+  return () => {
+    window.removeEventListener('lang-changed', render)
+  }
 }

@@ -99,7 +99,30 @@ export async function placeBet ({ marketId, side, stake, leverage }) {
   return data // UUID de la position créée
 }
 
-// Importe un market externe (Polymarket / Manifold) à la demande
+// Realtime : abonne aux UPDATEs de la table markets (stakes qui bougent)
+// callback(updatedMarket) appelé pour chaque update reçu
+let marketsChannel = null
+export function subscribeToMarketUpdates (callback) {
+  if (marketsChannel) return marketsChannel
+  marketsChannel = sb
+    .channel('markets-feed')
+    .on('postgres_changes',
+      { event: 'UPDATE', schema: 'public', table: 'markets' },
+      (payload) => {
+        const updated = payload?.new
+        if (updated) callback(updated)
+      }
+    )
+    .subscribe()
+  return marketsChannel
+}
+
+export function unsubscribeFromMarkets () {
+  if (marketsChannel) sb.removeChannel(marketsChannel)
+  marketsChannel = null
+}
+
+// Importe un market externe (Polymarket) à la demande
 // Retourne l'UUID interne (idempotent : si déjà importé, renvoie le même UUID)
 export async function importExternalMarket (m) {
   const externalId = String(m.id || '').replace(/^(pm|mf):/, '')

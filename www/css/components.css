@@ -141,6 +141,34 @@
 .badge-cat-forex     { background: rgba(20, 184, 166, 0.15); color: var(--cat-forex); }
 .badge-cat-risk      { background: rgba(239, 68, 68, 0.15);  color: var(--cat-risk); }
 
+/* Live tick indicator (markets header) */
+.tick-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--neon);
+  margin-left: 6px;
+  vertical-align: middle;
+  animation: tick-pulse 2s ease-in-out infinite;
+}
+
+@keyframes tick-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4); }
+  50% { opacity: 0.6; box-shadow: 0 0 0 6px rgba(0, 255, 136, 0); }
+}
+
+/* Flash animation : carte dont les cotes viennent de changer */
+.odds-flash {
+  animation: odds-flash-anim 1.2s ease-out;
+}
+
+@keyframes odds-flash-anim {
+  0%   { box-shadow: 0 0 0 2px rgba(0, 255, 136, 0); border-color: var(--border); }
+  20%  { box-shadow: 0 0 0 2px var(--neon); border-color: var(--neon); }
+  100% { box-shadow: 0 0 0 2px rgba(0, 255, 136, 0); border-color: var(--border); }
+}
+
 /* Hard refresh button (header) */
 .hr-btn {
   display: inline-flex;

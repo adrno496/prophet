@@ -3,8 +3,9 @@
 // Topics scroll horizontal · grid mixte (events + directional) · bootstrap auto
 // ============================================================================
 
-import { fetchAllLatestPrices, subscribeToPrices } from '../api/prices.js'
-import { fetchOpenMarkets, groupMarketsByTopic, extractTopics, importExternalMarket } from '../api/markets.js'
+import { fetchAllLatestPrices, subscribeToPrices, unsubscribeFromPrices } from '../api/prices.js'
+import { fetchOpenMarkets, groupMarketsByTopic, extractTopics, importExternalMarket, subscribeToMarketUpdates, unsubscribeFromMarkets } from '../api/markets.js'
+import { lastTickRelative, tickAll } from '../tick.js'
 import { bootstrapWithCoinGecko } from '../api/coingecko.js'
 import { fetchPolymarketMarkets, loadCachedPolymarket } from '../api/polymarket.js'
 import { store } from '../state.js'
@@ -96,7 +97,11 @@ export async function mountMarkets (rootEl) {
           </div>
         ` : htmlRaw`
           <div class="row-between" style="font-size:var(--fs-xs);color:var(--muted);padding:0 var(--sp-1)">
-            <span>${markets.length} ${lang === 'fr' ? 'marchés actifs' : 'active markets'}</span>
+            <span>
+              ${markets.length} ${lang === 'fr' ? 'marchés actifs' : 'active markets'}
+              <span id="tick-indicator" class="tick-dot" title="${lang === 'fr' ? 'Mise à jour automatique toutes les 5 min' : 'Auto-refresh every 5 min'}"></span>
+              <span id="tick-relative" class="text-mute" style="margin-left:var(--sp-1)"></span>
+            </span>
             <button id="btn-bootstrap" class="btn-link" ${bootstrapping ? 'disabled' : ''}>
               ${bootstrapping ? '⏳' : '🔄 ' + (lang === 'fr' ? 'Rafraîchir' : 'Refresh')}
             </button>
@@ -277,10 +282,71 @@ export async function mountMarkets (rootEl) {
   render()
 
   subscribeToPrices()
-  store.on('prices', (p) => {
+  const unsubStorePrices = store.on('prices', (p) => {
     prices = p || {}
     renderGrid()
   })
 
+  // Realtime markets : quand un autre user place_bet, les stakes changent ici
+  subscribeToMarketUpdates((updated) => {
+    const idx = markets.findIndex(m => m.id === updated.id)
+    if (idx >= 0) {
+      markets[idx] = { ...markets[idx], ...updated }
+      flashMarketRow(updated.id)
+      renderGrid()
+    } else if (updated.status === 'open') {
+      markets.push(updated)
+      renderGrid()
+    }
+  })
+
+  // Handlers nommés pour pouvoir les retirer au cleanup
+  const onMarketsRefreshed = e => {
+    const fresh = e.detail?.markets
+    if (Array.isArray(fresh)) {
+      const externalOnly = markets.filter(m => m.is_external)
+      markets = [...fresh, ...externalOnly]
+      renderGrid()
+    }
+  }
+  const onPolymarketRefreshed = e => {
+    const fresh = e.detail?.markets
+    if (Array.isArray(fresh)) {
+      const dbOnly = markets.filter(m => !m.is_external)
+      markets = [...dbOnly, ...fresh]
+      renderGrid()
+    }
+  }
+  window.addEventListener('markets-refreshed', onMarketsRefreshed)
+  window.addEventListener('polymarket-refreshed', onPolymarketRefreshed)
+  window.addEventListener('tick-completed', updateTickIndicator)
   window.addEventListener('lang-changed', render)
+
+  // Refresh visuel du "il y a Xs" toutes les 10s (clear au cleanup)
+  const relativeTimer = setInterval(updateTickIndicator, 10_000)
+
+  function updateTickIndicator () {
+    const el = rootEl.querySelector('#tick-relative')
+    if (el) el.textContent = lastTickRelative() || ''
+  }
+
+  function flashMarketRow (marketId) {
+    const card = rootEl.querySelector(`[data-market-id="${marketId}"]`)?.closest('.ev-card, .pm-card')
+    if (card) {
+      card.classList.add('odds-flash')
+      setTimeout(() => card.classList.remove('odds-flash'), 1200)
+    }
+  }
+
+  // Cleanup retourné à main.js : appelé au switch de vue
+  return () => {
+    clearInterval(relativeTimer)
+    if (typeof unsubStorePrices === 'function') unsubStorePrices()
+    unsubscribeFromPrices()
+    unsubscribeFromMarkets()
+    window.removeEventListener('markets-refreshed', onMarketsRefreshed)
+    window.removeEventListener('polymarket-refreshed', onPolymarketRefreshed)
+    window.removeEventListener('tick-completed', updateTickIndicator)
+    window.removeEventListener('lang-changed', render)
+  }
 }

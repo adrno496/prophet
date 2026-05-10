@@ -3,7 +3,7 @@
 // 2 onglets : Ouvertes (live countdown) · Historique (30 dernières)
 // ============================================================================
 
-import { fetchOpenPositions, fetchPositionHistory, subscribeToOwnPositions } from '../api/positions.js'
+import { fetchOpenPositions, fetchPositionHistory, subscribeToOwnPositions, unsubscribeFromOwnPositions } from '../api/positions.js'
 import { sb } from '../supabase-client.js'
 import { getLang } from '../i18n/index.js'
 import { escHTML, htmlRaw } from '../utils/escHTML.js'
@@ -115,4 +115,11 @@ export async function mountPositions (rootEl) {
   subscribeToOwnPositions()
   window.addEventListener('positions-changed', reload)
   window.addEventListener('lang-changed', render)
+
+  // Cleanup retourné à main.js
+  return () => {
+    unsubscribeFromOwnPositions()
+    window.removeEventListener('positions-changed', reload)
+    window.removeEventListener('lang-changed', render)
+  }
 }

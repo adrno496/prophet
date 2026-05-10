@@ -4,8 +4,8 @@
 // ============================================================================
 
 import { store, claimDailyBonus, fetchFearGreed, loadProfile } from '../state.js'
-import { fetchOpenPositions, subscribeToOwnPositions } from '../api/positions.js'
-import { fetchAllLatestPrices, subscribeToPrices } from '../api/prices.js'
+import { fetchOpenPositions, subscribeToOwnPositions, unsubscribeFromOwnPositions } from '../api/positions.js'
+import { fetchAllLatestPrices, subscribeToPrices, unsubscribeFromPrices } from '../api/prices.js'
 import { sb } from '../supabase-client.js'
 import { checkAchievements } from '../api/achievements.js'
 import { shouldShowOnboarding, showOnboarding } from '../components/onboarding.js'
@@ -219,12 +219,16 @@ export function mountDashboard (rootEl) {
     }
     render()
 
-    await Promise.all([
-      loadProfile(),
-      fetchFearGreed(),
-      fetchAllLatestPrices(),
-      reloadOpenPositions()
-    ])
+    try {
+      await Promise.all([
+        loadProfile(),
+        fetchFearGreed(),
+        fetchAllLatestPrices(),
+        reloadOpenPositions()
+      ])
+    } catch (e) {
+      console.error('[dashboard] boot fetch error', e)
+    }
     subscribeToPrices()
     subscribeToOwnPositions()
 
@@ -237,9 +241,20 @@ export function mountDashboard (rootEl) {
     }
   })()
 
-  store.on('profile', render)
-  store.on('fng', render)
-  store.on('prices', render)
+  const unsubProfile = store.on('profile', render)
+  const unsubFng = store.on('fng', render)
+  const unsubPrices = store.on('prices', render)
   window.addEventListener('positions-changed', reloadOpenPositions)
   window.addEventListener('lang-changed', render)
+
+  // Cleanup retourné à main.js
+  return () => {
+    if (typeof unsubProfile === 'function') unsubProfile()
+    if (typeof unsubFng === 'function') unsubFng()
+    if (typeof unsubPrices === 'function') unsubPrices()
+    unsubscribeFromPrices()
+    unsubscribeFromOwnPositions()
+    window.removeEventListener('positions-changed', reloadOpenPositions)
+    window.removeEventListener('lang-changed', render)
+  }
 }

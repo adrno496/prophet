@@ -151,8 +151,13 @@ export function mountProfile (rootEl) {
   }
 
   render()
-  store.on('profile', render)
+  const unsubProfile = store.on('profile', render)
   window.addEventListener('lang-changed', render)
   loadProfile()
   loadAchievements()
+
+  return () => {
+    if (typeof unsubProfile === 'function') unsubProfile()
+    window.removeEventListener('lang-changed', render)
+  }
 }

@@ -4,6 +4,7 @@
 // ============================================================================
 
 import { requireAuth, onAuthChange } from './auth.js'
+import { startTicking, tickAll } from './tick.js'
 import { store } from './state.js'
 import { mountHeader } from './components/header.js'
 import { mountTabs } from './components/bottom-tabs.js'
@@ -54,12 +55,28 @@ async function boot () {
   const tabsEl = document.querySelector('#app-tabs')
   const viewEl = document.querySelector('#view')
   let active = currentView()
+  let currentCleanup = null
 
-  function loadView (id) {
+  async function loadView (id) {
+    // Démontage propre de la vue précédente (Realtime channels, intervals, listeners)
+    if (typeof currentCleanup === 'function') {
+      try { currentCleanup() } catch (e) { console.warn('[loadView] cleanup error', e) }
+      currentCleanup = null
+    }
+
     active = id
     setHash(id)
     viewEl.innerHTML = ''
-    VIEWS[id](viewEl)
+    const result = VIEWS[id](viewEl)
+    // Le mount peut renvoyer une cleanup fn directe, ou une Promise qui en renvoie une
+    if (result && typeof result.then === 'function') {
+      currentCleanup = await result.catch(e => {
+        console.warn('[loadView] mount error', e)
+        return null
+      })
+    } else {
+      currentCleanup = result
+    }
     window.scrollTo({ top: 0, behavior: 'instant' })
   }
 
@@ -71,9 +88,16 @@ async function boot () {
   // Charger la vue initiale
   loadView(active)
 
+  // Démarrer le tick auto 5min (live data refresh)
+  startTicking()
+  // Premier tick immédiat (en arrière-plan, ne bloque pas la vue)
+  tickAll().catch(() => {})
+
   // Synchro hash → tabs (back button)
   window.addEventListener('hashchange', () => {
     const id = currentView()
+    // Guard : ignore les hashes inconnus pour éviter VIEWS[undefined](el) crash
+    if (!VIEWS[id]) return
     if (id !== active) {
       tabs.setActive(id)
       loadView(id)
