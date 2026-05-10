@@ -690,6 +690,134 @@
   color: var(--text-muted);
 }
 
+/* ========================================================================
+   AI Coach card
+   ======================================================================== */
+.ai-coach-card {
+  background: linear-gradient(180deg, rgba(167,139,250,0.08), rgba(99,202,255,0.04));
+  border: 1px solid rgba(167,139,250,0.3);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-3) var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.ai-coach-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.ai-coach-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--premium), var(--primary));
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.ai-coach-title {
+  font-weight: 800;
+  font-size: var(--fs-md);
+  letter-spacing: -0.01em;
+}
+
+.ai-coach-sub {
+  font-size: var(--fs-xs);
+  color: var(--text-muted);
+}
+
+.ai-coach-conf {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  min-width: 56px;
+}
+
+.ai-coach-conf-value {
+  font-size: var(--fs-md);
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: var(--primary);
+}
+
+.ai-coach-conf-bar {
+  width: 56px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.ai-coach-conf-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.4s var(--ease);
+}
+
+.ai-coach-reasoning {
+  font-size: var(--fs-sm);
+  color: var(--text);
+  line-height: 1.45;
+  font-style: italic;
+}
+
+.ai-coach-reasoning::before {
+  content: '“ ';
+  color: var(--premium);
+}
+.ai-coach-reasoning::after {
+  content: ' ”';
+  color: var(--premium);
+}
+
+.ai-coach-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-2);
+}
+
+.btn-coach {
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius);
+  border: none;
+  font-weight: 800;
+  font-size: var(--fs-sm);
+  cursor: pointer;
+  transition: filter var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+
+.btn-coach-follow {
+  background: linear-gradient(135deg, var(--premium), var(--primary));
+  color: #fff;
+}
+.btn-coach-against {
+  background: rgba(255, 59, 92, 0.15);
+  color: var(--red);
+  border: 1px solid var(--red);
+}
+
+.btn-coach:hover { filter: brightness(1.12); }
+.btn-coach:active { transform: scale(0.97); }
+
+/* Empty state IA Coach */
+.ai-coach-empty {
+  background: linear-gradient(180deg, rgba(167,139,250,0.06), rgba(99,202,255,0.03));
+  border: 1px dashed rgba(167,139,250,0.4);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-4);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
 @keyframes toast-in {
   from { transform: translateY(-12px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
